@@ -5,13 +5,11 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.Set;
-import java.util.concurrent.ThreadFactory;
 
-import javax.inject.Inject;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -33,38 +31,42 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class FolderPlaylistCreator extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(FolderPlaylistCreator.class);
-	
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(FolderPlaylistCreator.class);
+
 	private final JButton selectFolderButton = new JButton("Browse");
-	private final JTextField selectedFolderTextField = new JTextField("[none selected]");
-	private JTextArea folderContentsTextArea = new JTextArea("[no folder selected]");
+	private final JTextField selectedFolderTextField = new JTextField(
+			"[none selected]");
+	private JTextArea folderContentsTextArea = new JTextArea(
+			"[no folder selected]");
 	private JButton createButton = new JButton("Create");
 	private JScrollPane scrollPane;
-	
-	
-	private DirFilesReader dirFilesReader;	
+
+	private DirFilesReader dirFilesReader;
 	private PlaylistWriter playlistWriter;
 	private Collection<Path> playlistFiles;
-	
-	
+
 	public FolderPlaylistCreator(String title) {
 		super(title);
 		init();
 	}
-	
+
 	private void init() {
-		ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		@SuppressWarnings("resource")
+		ApplicationContext context = new AnnotationConfigApplicationContext(
+				ApplicationConfig.class);
 		dirFilesReader = context.getBean(DirFilesReader.class);
 		playlistWriter = context.getBean(PlaylistWriter.class);
-		
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				
+
 		setLayout(new FlowLayout());
-		
-		selectFolderButton.setIcon(new ImageIcon("target/classes/icons/audio-folder-icon-32x32.png"));
+
+		selectFolderButton.setIcon(new ImageIcon(
+				"target/classes/icons/audio-folder-icon-32x32.png"));
 		selectFolderButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
@@ -72,83 +74,108 @@ public class FolderPlaylistCreator extends JFrame {
 				fileChooser.setDialogTitle("Select Folder");
 				int returnValue = fileChooser.showOpenDialog(null);
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					selectedFolderTextField.setText(fileChooser.getSelectedFile().getAbsolutePath());
-					
+					selectedFolderTextField.setText(fileChooser
+							.getSelectedFile().getAbsolutePath());
+
 					try {
-						playlistFiles = dirFilesReader.read(Paths.get(selectedFolderTextField.getText()));
+						playlistFiles = dirFilesReader.read(Paths
+								.get(selectedFolderTextField.getText()));
 					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(null, "Could not read selected folder", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null,
+								"Could not read selected folder", "Error",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					if (playlistFiles.isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Selected folder is Empty", "Warning", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null,
+								"Selected folder is Empty", "Warning",
+								JOptionPane.WARNING_MESSAGE);
 						return;
 					}
 					folderContentsTextArea.setText(null);
 					for (Path fileInFolder : playlistFiles) {
-						folderContentsTextArea.setText(folderContentsTextArea.getText() + fileInFolder + "\n");
+						folderContentsTextArea.setText(folderContentsTextArea
+								.getText() + fileInFolder + "\n");
 					}
-					
+
 					createButton.setEnabled(true);
 					revalidate();
 				}
 			}
 		});
-	
+
 		selectedFolderTextField.setEditable(false);
 		selectedFolderTextField.setPreferredSize(new Dimension(400, 25));
-		
-		scrollPane = new JScrollPane(folderContentsTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+
+		scrollPane = new JScrollPane(folderContentsTextArea,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+
 		scrollPane.setPreferredSize(new Dimension(550, 500));
-		
-		createButton.setEnabled(false);	
-		
+
+		createButton.setEnabled(false);
+
 		createButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Path playlistFilename = Paths.get(selectedFolderTextField.getText() + ".m3u");
+				Path playlistFilename = Paths.get(selectedFolderTextField
+						.getText() + ".m3u");
 				LOGGER.debug("playlistFilename={}", playlistFilename);
+				if (Files.exists(playlistFilename)) {
+					Path onlyFilename = Paths.get(playlistFilename.toString()).getFileName();
+					int response = JOptionPane
+										.showConfirmDialog(null,
+												onlyFilename + "\nalready exists.\n Do you want to replace it?",
+									"Confirm Overwrite",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.QUESTION_MESSAGE);
+					if (response == JOptionPane.NO_OPTION) {
+						return;
+					}
+				}
 				playlistWriter.write(playlistFilename, playlistFiles);
-				JOptionPane.showMessageDialog(null, "Playlist created.", "Information", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, 
+						Paths.get(playlistFilename.toString()).getFileName() + " created.",
+						"Information", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
-		
+
 		// adding all components
 		add(selectFolderButton);
 		add(selectedFolderTextField);
 		add(scrollPane);
 		add(createButton);
-		
-				
+
 	}
-	
+
 	private static void constructGUI() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		FolderPlaylistCreator frame = new FolderPlaylistCreator("Folder Playlist Creator");
+		FolderPlaylistCreator frame = new FolderPlaylistCreator(
+				"Folder Playlist Creator");
 		frame.setSize(575, 660);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setVisible(true);
 	}
-	
+
 	public static void setupGlobalExceptionHandling() {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-			
+
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
-					JOptionPane.showMessageDialog(null, "Unexpected error occurred:\n" + e, "Error", JOptionPane.ERROR_MESSAGE);
-					LOGGER.error("Unexpected error occurred:", e);
+				JOptionPane.showMessageDialog(null,
+						"Unexpected error occurred:\n" + e, "Error",
+						JOptionPane.ERROR_MESSAGE);
+				LOGGER.error("Unexpected error occurred:", e);
 			}
 		});
 	}
-	
-	public static void main(String[] args) {		
-		
+
+	public static void main(String[] args) {
+
 		SwingUtilities.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				setupGlobalExceptionHandling();

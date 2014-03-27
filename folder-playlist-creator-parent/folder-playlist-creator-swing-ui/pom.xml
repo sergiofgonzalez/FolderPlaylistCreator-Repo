@@ -17,10 +17,6 @@
 	<description>	
 		Swing UI for the FolderPlaylistCreator application.
 		Outstanding Items (to be done before release):
-			+ Check Lifecycle of the buttons and ui components:
-				- disable create button when folder not selected
-				- enable create button when folder selected				
-			+ Show confirmation dialog when overwriting playlist
 			+ Add basic menu
 			+ pack as an executable jar and create distribution folder
 			
