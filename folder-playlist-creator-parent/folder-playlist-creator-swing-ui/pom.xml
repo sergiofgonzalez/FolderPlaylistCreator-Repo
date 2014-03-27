@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.joolzminer</groupId>
+		<artifactId>folder-playlist-creator-parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+    <artifactId>folder-playlist-creator-swing-ui</artifactId>
+
+    <packaging>jar</packaging>
+
+    <name>|-- folder-playlist-creator-swing-ui</name>
+  	
+	<description>	
+		Swing UI for the FolderPlaylistCreator application.
+		Outstanding Items (to be done before release):
+			+ Check Lifecycle of the buttons and ui components:
+				- disable create button when folder not selected
+				- enable create button when folder selected				
+			+ Show confirmation dialog when overwriting playlist
+			+ Nicer exception handling (show error dialog)
+			+ pack as an executable jar and create distribution folder
+			
+		Nice to have:
+			+ Integrate with springboot (https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples/spring-boot-sample-simple)
+			+ Create a controller and apply MVC to the whole solution (remove business logic from the frame)	
+	</description>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.joolzminer</groupId>
+			<artifactId>folder-playlist-creator-services</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>
+

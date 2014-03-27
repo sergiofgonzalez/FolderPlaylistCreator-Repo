@@ -17,6 +17,7 @@
 		    
 	<modules>
 		<module>folder-playlist-creator-services</module>
+		<module>folder-playlist-creator-swing-ui</module>
 	</modules>	   
 
 	
