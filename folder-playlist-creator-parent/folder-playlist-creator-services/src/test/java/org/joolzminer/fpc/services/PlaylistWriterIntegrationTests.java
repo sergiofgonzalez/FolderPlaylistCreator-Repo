@@ -28,7 +28,6 @@ import static org.hamcrest.Matchers.*;
 /**
  * + Playlist must have a name
  * + Playlist files must not be empty
- * + Playlist name must not exist
  * + If the playlist has one file, the playlist will have a single entry relativize to playlist location
  * + If the playlist has several files, the playlist will have as many lines as files in the same order,
  *   and relativize to the playlist location.
@@ -88,13 +87,20 @@ public class PlaylistWriterIntegrationTests {
 		writer.write(Paths.get("*%$jskjlj\\//"), files);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void testPlaylistNameMustNotPreviouslyExist() throws IOException {
+	@Test
+	public void testPlaylistNameIsOverwrittenIfPreviouslyExist() throws IOException {
 		Path playlist = Paths.get(TEST_ROOT_PATH.toString(), "playlist.m3u");
 		Files.createFile(playlist);
-		List<Path> files = Arrays.asList(new Path[] { Paths.get("./mp3z/file1.txt") });
-		
+		List<Path> files = Arrays.asList(new Path[] { Paths.get(TEST_ROOT_PATH.toString(), "mp3z", "song1.mp3") });
 		writer.write(playlist, files);
+		
+		List<Path> newFiles = Arrays.asList(new Path[] { Paths.get(TEST_ROOT_PATH.toString(), "mp3z", "song2.mp3") });
+		writer.write(playlist, newFiles);
+		List<String> fileLines = Files.readAllLines(playlist, Charset.defaultCharset());
+		
+		assertThat(Files.exists(playlist), is(true));
+		assertThat(fileLines, hasSize(1));
+		assertThat(fileLines, hasItem("mp3z/song2.mp3"));		
 	}
 	
 	@Test

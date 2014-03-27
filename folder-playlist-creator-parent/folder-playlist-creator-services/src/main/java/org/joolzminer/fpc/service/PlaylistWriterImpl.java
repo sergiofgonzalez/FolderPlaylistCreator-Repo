@@ -24,10 +24,12 @@ public class PlaylistWriterImpl implements PlaylistWriter {
 		Assert.notNull(playlistName, "playlistName must not be null");
 		Assert.hasText(playlistName.toString(), "playlistName contents must not be null or empty");
 		Assert.notEmpty(playlistFiles, "playlistFiles must not be null or empty");
-		Assert.isTrue(!Files.exists(playlistName), "there is already a file with the playlistName");
+		if (Files.exists(playlistName)) {
+			LOGGER.warn("there is already a file with the playlistName: {}", playlistName);
+		}
 		
 		Charset utf8Charset = Charset.forName("utf-8");
-		try (	BufferedWriter bufferedWriter = Files.newBufferedWriter(playlistName, utf8Charset, StandardOpenOption.CREATE);
+		try (	BufferedWriter bufferedWriter = Files.newBufferedWriter(playlistName, utf8Charset, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 				PrintWriter printWriter = new PrintWriter(bufferedWriter);) {
 			for (Path playlistFile : playlistFiles) {
 				String relativeFilename = playlistName.getParent().relativize(playlistFile).toString();				
