@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.ThreadFactory;
 
 import javax.inject.Inject;
 import javax.swing.ImageIcon;
@@ -133,12 +134,24 @@ public class FolderPlaylistCreator extends JFrame {
 		frame.setVisible(true);
 	}
 	
+	public static void setupGlobalExceptionHandling() {
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+					JOptionPane.showMessageDialog(null, "Unexpected error occurred:\n" + e, "Error", JOptionPane.ERROR_MESSAGE);
+					LOGGER.error("Unexpected error occurred:", e);
+			}
+		});
+	}
+	
 	public static void main(String[] args) {		
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
+				setupGlobalExceptionHandling();
 				constructGUI();
 			}
 		});

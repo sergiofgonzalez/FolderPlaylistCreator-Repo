@@ -21,7 +21,7 @@
 				- disable create button when folder not selected
 				- enable create button when folder selected				
 			+ Show confirmation dialog when overwriting playlist
-			+ Nicer exception handling (show error dialog)
+			+ Add basic menu
 			+ pack as an executable jar and create distribution folder
 			
 		Nice to have:
