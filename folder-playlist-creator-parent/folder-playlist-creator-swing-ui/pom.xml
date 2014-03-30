@@ -24,7 +24,7 @@
 			+ Refactor the UI class (It's too large!)
 			+ Integrate with springboot (https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples/spring-boot-sample-simple)
 			+ Create a controller and apply MVC to the whole solution (remove business logic from the frame)
-			+ Use SonarQube to check code quality	
+			+ Use SonarQube to check code quality.	
 	</description>
 	
 	<dependencies>
