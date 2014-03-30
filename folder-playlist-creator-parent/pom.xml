@@ -182,6 +182,43 @@
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>2.1</version>
+			</plugin>
+			
+			<!-- Maven Shade plugin for creating executable JAR -->
+			<plugin>
+	    	<!-- create an all-in-one executable jar with maven-shade-plugin
+	        	 bound to phase:package 
+	         	special handling for spring.handlers/spring.schemas files
+	         	to prevent overwriting (maven-shade-plugin joins them to
+	         	one file) 
+	         -->                     
+	    		<artifactId>maven-shade-plugin</artifactId>
+	    		<version>2.1</version>
+	    		<executions>
+	        		<execution>
+	            		<phase>package</phase>
+	            		<goals>
+	                		<goal>shade</goal>
+	            		</goals>
+	            		<configuration>
+	                		<transformers>
+	                    		<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+	                        		<mainClass>org.joolzminer.fpc.swingui.FolderPlaylistCreator</mainClass>
+	                    		</transformer>
+	                    		<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+	                        		<resource>META-INF/spring.handlers</resource>
+	                    		</transformer>
+	                    		<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+	                        		<resource>META-INF/spring.schemas</resource>
+	                    		</transformer>
+	                		</transformers>
+	                		<shadedArtifactAttached>true</shadedArtifactAttached>
+	                		<!-- configures the suffix name for the executable jar
+	                    	 here it will be '<project.artifact>-<project.version>-executable.jar'-->
+	                		<shadedClassifierName>executable</shadedClassifierName>
+	            		</configuration>
+	        		</execution>
+	    		</executions>
 			</plugin>            
         </plugins>
     </build>

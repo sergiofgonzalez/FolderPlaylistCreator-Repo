@@ -135,8 +135,8 @@ public class FolderPlaylistCreator extends JFrame {
 
 		setLayout(new FlowLayout());
 
-		selectFolderButton.setIcon(new ImageIcon(
-				"target/classes/icons/audio-folder-icon-32x32.png"));
+		selectFolderButton.setIcon(new ImageIcon(getClass().getResource(
+				"/icons/audio-folder-icon-32x32.png")));
 		selectFolderButton.addActionListener(new SelectFolderAction());
 
 		selectedFolderTextField.setEditable(false);
@@ -158,6 +158,9 @@ public class FolderPlaylistCreator extends JFrame {
 		add(scrollPane);
 		add(createButton);
 
+		setIconImage(new ImageIcon(getClass().getResource(
+				"/icons/audio-folder-icon-32x32.png")).getImage());
+		
 		initMenu();
 	}
 
@@ -172,8 +175,8 @@ public class FolderPlaylistCreator extends JFrame {
 		menuBar.add(helpMenu);
 
 		JMenuItem fileNewMenuItem = new JMenuItem("New");
-		JMenuItem fileOpenMenuItem = new JMenuItem("Open...", new ImageIcon(
-				"target/classes/icons/audio-folder-icon-16x16.png"));
+		JMenuItem fileOpenMenuItem = new JMenuItem("Open...", new ImageIcon(getClass().getResource(
+				"/icons/audio-folder-icon-16x16.png")));
 		fileOpenMenuItem.addActionListener(new SelectFolderAction());
 		fileCreateMenuItem = new JMenuItem("Create");
 		fileCreateMenuItem.setEnabled(false);
@@ -218,8 +221,7 @@ public class FolderPlaylistCreator extends JFrame {
 								"FolderPlaylistCreator v1.0-SNAPSHOT",
 								"About FolderPlaylistCreator",
 								JOptionPane.OK_OPTION,
-								new ImageIcon(
-										"target/classes/icons/audio-folder-icon-128x128.png"));
+								new ImageIcon(getClass().getResource("/icons/audio-folder-icon-128x128.png")));
 			}
 		});
 
@@ -233,8 +235,7 @@ public class FolderPlaylistCreator extends JFrame {
 		frame.setSize(575, 660);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
-		frame.setIconImage(new ImageIcon(
-				"target/classes/icons/audio-folder-icon-32x32.png").getImage());
+
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
