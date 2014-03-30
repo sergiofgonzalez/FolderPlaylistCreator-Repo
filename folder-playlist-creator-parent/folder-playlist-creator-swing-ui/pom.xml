@@ -19,7 +19,7 @@
 		Outstanding Items (to be done before release):
 			+ read version from POM and use it on the about.
 			+ Put joolzminer on the about.
-			+ Create a new repo on GitHub
+			+ Create a new repo on GitHub.
 		Nice to have:
 			+ Refactor the UI class (It's too large!)
 			+ Integrate with springboot (https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples/spring-boot-sample-simple)
