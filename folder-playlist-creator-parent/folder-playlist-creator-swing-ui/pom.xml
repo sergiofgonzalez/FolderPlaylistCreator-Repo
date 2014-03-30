@@ -17,7 +17,7 @@
 	<description>	
 		Swing UI for the FolderPlaylistCreator application.
 		Outstanding Items (to be done before release):
-			+ read version from POM and use it on the about.
+			+ read version from POM and use it on the about
 			+ Put joolzminer on the about.
 			+ Create a new repo on GitHub.
 		Nice to have:
