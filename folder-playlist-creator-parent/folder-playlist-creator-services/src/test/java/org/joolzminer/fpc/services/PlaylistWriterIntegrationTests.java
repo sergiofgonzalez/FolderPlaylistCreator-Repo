@@ -31,6 +31,7 @@ import static org.hamcrest.Matchers.*;
  * + If the playlist has one file, the playlist will have a single entry relativize to playlist location
  * + If the playlist has several files, the playlist will have as many lines as files in the same order,
  *   and relativize to the playlist location.
+ * + Only .mp3 files are added to the playlist
  *   
  * File relativization examples:
  * 			c:/temp/playlists/kermode-mayo/kermode.m3u
@@ -147,4 +148,21 @@ public class PlaylistWriterIntegrationTests {
 		assertThat(fileLines, contains("mp3z-001/song1.mp3", "mp3z-001/song2.mp3", "mp3z-002/song3.mp3"));
 	}	
 	
+	@Test
+	public void testCreatePlaylistWithMp3AndNonMp3Files() throws IOException {
+		Path playlist = Paths.get(TEST_ROOT_PATH.toString(), "playlist.m3u");
+		List<Path> files = Arrays.asList(new Path[] { 
+				Paths.get(TEST_ROOT_PATH.toString(), "mp3z-001", "photo.jpg"),
+				Paths.get(TEST_ROOT_PATH.toString(), "mp3z-001", "song1.mp3"),
+				Paths.get(TEST_ROOT_PATH.toString(), "mp3z-001", "song2.mp3"),
+				Paths.get(TEST_ROOT_PATH.toString(), "mp3z-001", "kermode.m3u"),
+				Paths.get(TEST_ROOT_PATH.toString(), "mp3z-002", "song3.mp3") });
+
+		writer.write(playlist, files);
+		List<String> fileLines = Files.readAllLines(playlist, Charset.defaultCharset());
+		
+		assertThat(Files.exists(playlist), is(true));
+		assertThat(fileLines, hasSize(3));
+		assertThat(fileLines, contains("mp3z-001/song1.mp3", "mp3z-001/song2.mp3", "mp3z-002/song3.mp3"));
+	}
 }

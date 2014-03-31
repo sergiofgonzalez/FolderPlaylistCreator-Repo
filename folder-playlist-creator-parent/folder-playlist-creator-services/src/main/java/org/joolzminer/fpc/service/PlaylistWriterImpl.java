@@ -6,9 +6,11 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,9 +34,11 @@ public class PlaylistWriterImpl implements PlaylistWriter {
 		try (	BufferedWriter bufferedWriter = Files.newBufferedWriter(playlistName, utf8Charset, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 				PrintWriter printWriter = new PrintWriter(bufferedWriter);) {
 			for (Path playlistFile : playlistFiles) {
-				String relativeFilename = playlistName.getParent().relativize(playlistFile).toString();				
-				printWriter.write(relativeFilename.replace("\\", "/"));
-				printWriter.write("\n");
+				if (FilenameUtils.getExtension(playlistFile.toString()).equalsIgnoreCase("mp3")) {
+					String relativeFilename = playlistName.getParent().relativize(playlistFile).toString();				
+					printWriter.write(relativeFilename.replace("\\", "/"));
+					printWriter.write("\n");
+				}
 			}
 		} catch (IOException e) {
 			LOGGER.error("Error found while writing the playlist file", e);
