@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.Environment;
 
 public class FolderPlaylistCreator extends JFrame {
 
@@ -51,6 +52,8 @@ public class FolderPlaylistCreator extends JFrame {
 
 	private DirFilesReader dirFilesReader;
 	private PlaylistWriter playlistWriter;
+	private Environment environment;
+	
 	private Collection<Path> playlistFiles;
 
 	private class SelectFolderAction implements ActionListener {
@@ -130,6 +133,7 @@ public class FolderPlaylistCreator extends JFrame {
 				ApplicationConfig.class);
 		dirFilesReader = context.getBean(DirFilesReader.class);
 		playlistWriter = context.getBean(PlaylistWriter.class);
+		environment = context.getBean(Environment.class);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -218,7 +222,7 @@ public class FolderPlaylistCreator extends JFrame {
 				JOptionPane
 						.showMessageDialog(
 								null,
-								"FolderPlaylistCreator v1.0-SNAPSHOT",
+								"FolderPlaylistCreator v" + environment.getProperty("version"),
 								"About FolderPlaylistCreator",
 								JOptionPane.OK_OPTION,
 								new ImageIcon(getClass().getResource("/icons/audio-folder-icon-128x128.png")));
@@ -243,6 +247,7 @@ public class FolderPlaylistCreator extends JFrame {
 				confirmExitApp();
 			}
 		});
+
 		frame.setVisible(true);
 	}
 

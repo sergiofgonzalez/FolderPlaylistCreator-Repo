@@ -17,13 +17,15 @@
 	<description>	
 		Swing UI for the FolderPlaylistCreator application.
 		Outstanding Items (to be done before release):
-			+ read version from POM and use it on the about
-			+ Put joolzminer on the about.
-			+ Resize fonts on HD displays
-		Nice to have:
+			+ Put joolzminer on the about, and a more rich about.
+			+ Use SonarQube to check code quality and fix the most serious issues.
+
+		Nice to have (next version):
+			+ Resize fonts on HD displays: this should be created with a view menu so the user
+				can select between mini, regular and large. This should change the size of the fonts, and
+				the frame.
 			+ Refactor the UI class (It's too large!)
-			+ Create a controller and apply MVC to the whole solution (remove business logic from the frame).
-			+ Use SonarQube to check code quality.	
+			+ Create a controller and apply MVC to the whole solution (remove business logic from the frame).	
 	</description>
 	
 	<dependencies>
