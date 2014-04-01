@@ -5,6 +5,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,7 +53,7 @@ import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
-public class PlaylistWriterIntegrationTests {
+public class PlaylistWriterIntegrationTest {
 	private static final Path TEST_ROOT_PATH = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "File-Tests");
 	
 	@Inject
@@ -70,20 +72,20 @@ public class PlaylistWriterIntegrationTests {
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void testPlaylistNameMustNotBeNull() {
+	public void testPlaylistNameMustNotBeNull() throws IOException {
 		List<Path> files = Arrays.asList(new Path[] { Paths.get("./mp3z/file1.txt") });
 		
 		writer.write(null, files);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void testPlaylistNameMustNotBeEmpty() {
+	public void testPlaylistNameMustNotBeEmpty() throws IOException {
 		List<Path> files = Arrays.asList(new Path[] { Paths.get("./mp3z/file1.txt") });
 		writer.write(Paths.get(""), files);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void testPlaylistNameMustBeValidFilename() {
+	public void testPlaylistNameMustBeValidFilename() throws IOException {
 		List<Path> files = Arrays.asList(new Path[] { Paths.get("./mp3z/file1.txt") });
 		writer.write(Paths.get("*%$jskjlj\\//"), files);
 	}
@@ -102,6 +104,13 @@ public class PlaylistWriterIntegrationTests {
 		assertThat(Files.exists(playlist), is(true));
 		assertThat(fileLines, hasSize(1));
 		assertThat(fileLines, hasItem("mp3z/song2.mp3"));		
+	}
+	
+	@Test(expected = IOException.class)
+	public void testPlaylistCannotBeWritten() throws IOException {
+		Path playlist = Paths.get(TEST_ROOT_PATH.toString(), "non-existent", "playlist.m3u");
+		List<Path> files = Arrays.asList(new Path[] { Paths.get(TEST_ROOT_PATH.toString(), "mp3z", "song1.mp3") });
+		writer.write(playlist, files);		
 	}
 	
 	@Test

@@ -56,6 +56,16 @@ public class FolderPlaylistCreator extends JFrame {
 	
 	private Collection<Path> playlistFiles;
 
+	private static class UnexpectedException extends RuntimeException {
+
+		private static final long serialVersionUID = 1L;
+		
+		public UnexpectedException(Exception cause) {
+			super(cause);
+		}
+		
+	}
+	
 	private class SelectFolderAction implements ActionListener {
 
 		@Override
@@ -75,12 +85,14 @@ public class FolderPlaylistCreator extends JFrame {
 					JOptionPane.showMessageDialog(null,
 							"Could not read selected folder", "Error",
 							JOptionPane.ERROR_MESSAGE);
+					LOGGER.error("Could not read selected folder", ex);
 					return;
 				}
 				if (playlistFiles.isEmpty()) {
 					JOptionPane.showMessageDialog(null,
 							"Selected folder is Empty", "Warning",
 							JOptionPane.WARNING_MESSAGE);
+					LOGGER.error("Selected folder is empty", e);
 					return;
 				}
 				folderContentsTextArea.setText(null);
@@ -114,11 +126,16 @@ public class FolderPlaylistCreator extends JFrame {
 					return;
 				}
 			}
-			playlistWriter.write(playlistFilename, playlistFiles);
-			JOptionPane.showMessageDialog(null,
-					Paths.get(playlistFilename.toString()).getFileName()
-							+ " created.", "Information",
-					JOptionPane.INFORMATION_MESSAGE);
+			try {
+				playlistWriter.write(playlistFilename, playlistFiles);
+				JOptionPane.showMessageDialog(null,
+						Paths.get(playlistFilename.toString()).getFileName()
+								+ " created.", "Information",
+						JOptionPane.INFORMATION_MESSAGE);
+			} catch (IOException ex) {
+				// let the global exception handler catch this
+				throw new UnexpectedException(ex);
+			}
 		}
 	}
 
@@ -222,7 +239,8 @@ public class FolderPlaylistCreator extends JFrame {
 				JOptionPane
 						.showMessageDialog(
 								null,
-								"FolderPlaylistCreator v" + environment.getProperty("version"),
+								"\nFolderPlaylistCreator v" + environment.getProperty("version") + 
+								"\n\nA JoolzMiner project.\n\n",
 								"About FolderPlaylistCreator",
 								JOptionPane.OK_OPTION,
 								new ImageIcon(getClass().getResource("/icons/audio-folder-icon-128x128.png")));
